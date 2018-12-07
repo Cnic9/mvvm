@@ -1,7 +1,9 @@
 package com.google.com.mvvm.di
 
+import com.facebook.stetho.okhttp3.StethoInterceptor
+import com.google.com.mvvm.BASE_URL
 import com.google.com.mvvm.BuildConfig
-import com.google.com.mvvm.GithubAPI
+import com.google.com.mvvm.NewsAPI
 import dagger.Module
 import dagger.Provides
 import okhttp3.OkHttpClient
@@ -12,7 +14,7 @@ import retrofit2.converter.gson.GsonConverterFactory
 import javax.inject.Singleton
 
 @Module
-class NetworkModule() {
+class NetworkModule {
 
     @Provides
     @Singleton
@@ -21,6 +23,7 @@ class NetworkModule() {
         logging.level = if (BuildConfig.DEBUG) HttpLoggingInterceptor.Level.BODY else HttpLoggingInterceptor.Level.NONE
         return OkHttpClient.Builder()
             .addInterceptor(logging)
+            .addNetworkInterceptor(StethoInterceptor())
             .build()
     }
 
@@ -35,10 +38,7 @@ class NetworkModule() {
 
     @Provides
     @Singleton
-    fun provideApiService(retrofit: Retrofit): GithubAPI = retrofit.create(GithubAPI::class.java)
-
+    fun provideNewsApiService(retrofit : Retrofit) : NewsAPI = retrofit.create(NewsAPI::class.java)
 
 }
 
-
-var BASE_URL = "https://api.github.com/"
